@@ -1,12 +1,12 @@
 import React from 'react';
 
-const Filter = ({ searchTerm, handleSearchChange }) => {
+const Filter = ({ searchTerm, onSearchChange }) => {
   return (
     <div>
-      <label>Search: </label>
-      <input value={searchTerm} onChange={handleSearchChange} />
+      <label>Filter shown with </label>
+      <input value={searchTerm} onChange={onSearchChange} />
     </div>
   );
-}
+};
 
 export default Filter;

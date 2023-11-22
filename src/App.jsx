@@ -1,61 +1,68 @@
-import React, { useState,useEffect } from 'react';
-import Filter from './Filter';
-import PersonForm from './PersonForm';
-import Persons from './Persons';
-import personService from './personService';
+import React, { useState, useEffect } from "react";
+import personService from "./personService";
+import Filter from "./Filter";
+import PersonForm from "./PersonForm";
+import Persons from "./Persons";
+
 const App = () => {
   const [persons, setPersons] = useState([]);
-  const [newName, setNewName] = useState('');
-  const [newNumber, setNewNumber] = useState('');
-  const [searchTerm, setSearchTerm] = useState('');
+  const [newPerson, setNewPerson] = useState({ name: "", number: "" });
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     personService
-      .getAll()
-      .then(data => {
+      .getAllPersons()
+      .then((data) => {
         setPersons(data);
       })
-      .catch(error => {
+      .catch((error) => {
         console.error("Error fetching data:", error);
       });
   }, []);
 
+  const addPerson = () => {
+    personService
+      .addPerson(newPerson)
+      .then((data) => {
+        setPersons([...persons, data]);
+        setNewPerson({ name: "", number: "" });
+      })
+      .catch((error) => {
+        console.error("Error adding person:", error);
+      });
+  };
 
-  const handleNameChange = (event) => {
-    setNewName(event.target.value);
-  }
+  const deletePerson = (id) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this contact?"
+    );
 
-  const handleNumberChange = (event) => {
-    setNewNumber(event.target.value);
-  }
-
-  const handleSearchChange = (event) => {
-    setSearchTerm(event.target.value);
-  }
-
-  const handleFormSubmit = (event) => {
-    event.preventDefault();
-    const isNameAlreadyAdded = persons.some(person => person.name === newName);
-
-    if (isNameAlreadyAdded) {
-      alert(`${newName} is already added to phonebook`);
-    } else {
-      const newPerson = { name: newName, number: newNumber };
-      setPersons([...persons, newPerson]);
-      setNewName('');
-      setNewNumber('');
+    if (confirmDelete) {
       personService
-        .create(newPerson)
-        .then(data => {
-          console.log("Person added to the server:", data);
+        .deletePerson(id)
+        .then(() => {
+          setPersons(persons.filter((person) => person.id !== id));
         })
-        .catch(error => {
-          console.error("Error adding person to the server:", error);
+        .catch((error) => {
+          console.error("Error deleting person:", error);
         });
     }
   };
 
-  const filteredPersons = persons.filter(person =>
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const handlePersonChange = (field, value) => {
+    setNewPerson({ ...newPerson, [field]: value });
+  };
+
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    addPerson();
+  };
+
+  const filteredPersons = persons.filter((person) =>
     person.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -63,26 +70,14 @@ const App = () => {
     <div>
       <h2>Phonebook</h2>
 
-      <Filter
-        searchTerm={searchTerm}
-        handleSearchChange={handleSearchChange}
-      />
-
+      <Filter searchTerm={searchTerm} onSearchChange={handleSearchChange} />
       <h3>Add a new</h3>
-
       <PersonForm
-        newName={newName}
-        newNumber={newNumber}
-        handleNameChange={handleNameChange}
-        handleNumberChange={handleNumberChange}
-        handleFormSubmit={handleFormSubmit}
-      />
-
+        newPerson={newPerson} onPersonChange={handlePersonChange} onFormSubmit={handleFormSubmit} />
       <h3>Numbers</h3>
-
-      <Persons filteredPersons={filteredPersons} />
+      <Persons persons={filteredPersons} onDeletePerson={deletePerson} />
     </div>
-  )
-}
+  );
+};
 
 export default App;

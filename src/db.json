@@ -22,18 +22,8 @@
     },
     {
       "name": "anwar",
-      "number": "12345678",
+      "number": "1234567",
       "id": 5
-    },
-    {
-      "name": "adam",
-      "number": "12345678",
-      "id": 6
-    },
-    {
-      "name": "aa",
-      "number": "12345",
-      "id": 7
     }
   ]
 }

@@ -1,13 +1,18 @@
 import React from 'react';
 
-const Persons = ({ filteredPersons }) => {
+const Persons = ({ persons, onDeletePerson }) => {
   return (
     <div>
-      {filteredPersons.map((person, index) => (
-        <p key={index}>{person.name}  {person.number}</p>
+      {persons.map(person => (
+        <div key={person.id}>
+          <p>
+            {person.name} - {person.number}
+            <button onClick={() => onDeletePerson(person.id)}>Delete</button>
+          </p>
+        </div>
       ))}
     </div>
   );
-}
+};
 
 export default Persons;

@@ -1,20 +1,57 @@
-import axios from 'axios';
+const baseUrl = 'http://localhost:3001/persons'; 
 
-const baseUrl = 'http://localhost:3001/persons';
-
-const getAll = () => {
-  const request = axios.get(baseUrl);
-  return request.then(response => response.data);
+const getAllPersons = async () => {
+  try {
+    const response = await fetch(baseUrl);
+    if (!response.ok) {
+      throw new Error('Failed to fetch persons');
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw new Error(`Error in getAllPersons: ${error.message}`);
+  }
 };
 
-const create = newPerson => {
-  const request = axios.post(baseUrl, newPerson);
-  return request.then(response => response.data);
+const addPerson = async (newPerson) => {
+  try {
+    const response = await fetch(baseUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newPerson),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to add person');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw new Error(`Error in addPerson: ${error.message}`);
+  }
+};
+
+const deletePerson = async (id) => {
+  try {
+    const response = await fetch(`${baseUrl}/${id}`, {
+      method: 'DELETE',
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to delete person');
+    }
+  } catch (error) {
+    throw new Error(`Error in deletePerson: ${error.message}`);
+  }
 };
 
 const personService = {
-  getAll,
-  create
+  getAllPersons,
+  addPerson,
+  deletePerson,
 };
 
 export default personService;
