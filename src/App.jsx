@@ -44,8 +44,16 @@ const App = () => {
       setPersons([...persons, newPerson]);
       setNewName('');
       setNewNumber('');
+      axios
+        .post("http://localhost:3001/persons", newPerson)
+        .then((response) => {
+          console.log("Person added to the server:", response.data);
+        })
+        .catch((error) => {
+          console.error("Error adding person to the server:", error);
+        });
     }
-  }
+  };
 
   const filteredPersons = persons.filter(person =>
     person.name.toLowerCase().includes(searchTerm.toLowerCase())
