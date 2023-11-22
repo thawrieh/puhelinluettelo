@@ -2,7 +2,7 @@ import React, { useState,useEffect } from 'react';
 import Filter from './Filter';
 import PersonForm from './PersonForm';
 import Persons from './Persons';
-import axios from "axios";
+import personService from './personService';
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState('');
@@ -10,12 +10,12 @@ const App = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    axios
-      .get("http://localhost:3001/persons")
-      .then((response) => {
-        setPersons(response.data);
+    personService
+      .getAll()
+      .then(data => {
+        setPersons(data);
       })
-      .catch((error) => {
+      .catch(error => {
         console.error("Error fetching data:", error);
       });
   }, []);
@@ -44,12 +44,12 @@ const App = () => {
       setPersons([...persons, newPerson]);
       setNewName('');
       setNewNumber('');
-      axios
-        .post("http://localhost:3001/persons", newPerson)
-        .then((response) => {
-          console.log("Person added to the server:", response.data);
+      personService
+        .create(newPerson)
+        .then(data => {
+          console.log("Person added to the server:", data);
         })
-        .catch((error) => {
+        .catch(error => {
           console.error("Error adding person to the server:", error);
         });
     }
