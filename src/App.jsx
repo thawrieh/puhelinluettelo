@@ -3,12 +3,23 @@ import personService from "./personService";
 import Filter from "./Filter";
 import PersonForm from "./PersonForm";
 import Persons from "./Persons";
+import './App.css';
+const Notification = ({ message }) => {
+  if (message === null) {
+    return null;
+  }
 
+  return (
+    <div className="error">
+      {message}
+    </div>
+  );
+};
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newPerson, setNewPerson] = useState({ name: "", number: "" });
   const [searchTerm, setSearchTerm] = useState("");
-
+  const [errorMessage, setErrorMessage] = useState(null); 
   useEffect(() => {
     personService
       .getAllPersons()
@@ -26,9 +37,17 @@ const App = () => {
       .then((data) => {
         setPersons([...persons, data]);
         setNewPerson({ name: "", number: "" });
+        setErrorMessage(`${newPerson.name} added to the phonebook!`);
+        setTimeout(() => {
+          setErrorMessage(null);
+        }, 5000);
       })
       .catch((error) => {
         console.error("Error adding person:", error);
+        setErrorMessage("An error occurred while adding the person. Please try again.");
+        setTimeout(() => {
+          setErrorMessage(null);
+        }, 5000);
       });
   };
 
@@ -42,6 +61,10 @@ const App = () => {
         .deletePerson(id)
         .then(() => {
           setPersons(persons.filter((person) => person.id !== id));
+          setErrorMessage(`${name} deleted from the phonebook!`);
+          setTimeout(() => {
+            setErrorMessage(null);
+          }, 5000);
         })
         .catch((error) => {
           console.error("Error deleting person:", error);
@@ -69,7 +92,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-
+      <Notification message={errorMessage} /> 
       <Filter searchTerm={searchTerm} onSearchChange={handleSearchChange} />
       <h3>Add a new</h3>
       <PersonForm
