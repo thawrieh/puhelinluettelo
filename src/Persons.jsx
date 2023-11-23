@@ -7,7 +7,7 @@ const Persons = ({ persons, onDeletePerson }) => {
         <div key={person.id}>
           <p>
             {person.name} - {person.number}
-            <button onClick={() => onDeletePerson(person.id)}>Delete</button>
+            <button onClick={() => onDeletePerson(person.id,person.name)}>Delete</button>
           </p>
         </div>
       ))}

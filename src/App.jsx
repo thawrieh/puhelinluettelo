@@ -3,23 +3,19 @@ import personService from "./personService";
 import Filter from "./Filter";
 import PersonForm from "./PersonForm";
 import Persons from "./Persons";
-import './App.css';
+import "./App.css";
 const Notification = ({ message }) => {
   if (message === null) {
     return null;
   }
 
-  return (
-    <div className="error">
-      {message}
-    </div>
-  );
+  return <div className="error">{message}</div>;
 };
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newPerson, setNewPerson] = useState({ name: "", number: "" });
   const [searchTerm, setSearchTerm] = useState("");
-  const [errorMessage, setErrorMessage] = useState(null); 
+  const [errorMessage, setErrorMessage] = useState(null);
   useEffect(() => {
     personService
       .getAllPersons()
@@ -44,14 +40,22 @@ const App = () => {
       })
       .catch((error) => {
         console.error("Error adding person:", error);
-        setErrorMessage("An error occurred while adding the person. Please try again.");
+        if (error.response && error.response.status === 409) {
+          setErrorMessage(
+            `Failed to add ${newPerson.name}. The contact already exists. Please refresh and try again.`
+          );
+        } else {
+          setErrorMessage(
+            "An error occurred while adding the person. Please try again."
+          );
+        }
         setTimeout(() => {
           setErrorMessage(null);
         }, 5000);
       });
   };
 
-  const deletePerson = (id) => {
+  const deletePerson = (id, name) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this contact?"
     );
@@ -68,6 +72,15 @@ const App = () => {
         })
         .catch((error) => {
           console.error("Error deleting person:", error);
+          if (error.response && error.response.status === 404) {
+            setErrorMessage(
+              `${name} was not found. Please refresh and try again.`
+            );
+          } else {
+            setErrorMessage(
+              `Information of ${name} has already been removed from server`
+            );
+          }
         });
     }
   };
@@ -92,11 +105,14 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={errorMessage} /> 
+      <Notification message={errorMessage} />
       <Filter searchTerm={searchTerm} onSearchChange={handleSearchChange} />
       <h3>Add a new</h3>
       <PersonForm
-        newPerson={newPerson} onPersonChange={handlePersonChange} onFormSubmit={handleFormSubmit} />
+        newPerson={newPerson}
+        onPersonChange={handlePersonChange}
+        onFormSubmit={handleFormSubmit}
+      />
       <h3>Numbers</h3>
       <Persons persons={filteredPersons} onDeletePerson={deletePerson} />
     </div>
