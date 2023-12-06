@@ -1,10 +1,10 @@
-const baseUrl = 'http://localhost:3001/persons'; 
+const baseUrl = "http://localhost:3001/persons";
 
 const getAllPersons = async () => {
   try {
     const response = await fetch(baseUrl);
     if (!response.ok) {
-      throw new Error('Failed to fetch persons');
+      throw new Error("Failed to fetch persons");
     }
     const data = await response.json();
     return data;
@@ -15,16 +15,17 @@ const getAllPersons = async () => {
 
 const addPerson = async (newPerson) => {
   try {
+    debugger;
     const response = await fetch(baseUrl, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(newPerson),
     });
 
     if (!response.ok) {
-      throw new Error('Failed to add person');
+      throw new Error("Failed to add person");
     }
 
     const data = await response.json();
@@ -37,11 +38,11 @@ const addPerson = async (newPerson) => {
 const deletePerson = async (id) => {
   try {
     const response = await fetch(`${baseUrl}/${id}`, {
-      method: 'DELETE',
+      method: "DELETE",
     });
 
     if (!response.ok) {
-      throw new Error('Failed to delete person');
+      throw new Error("Failed to delete person");
     }
   } catch (error) {
     throw new Error(`Error in deletePerson: ${error.message}`);

@@ -28,12 +28,23 @@ const App = () => {
   }, []);
 
   const addPerson = () => {
+   
+    const personExists =
+      persons.filter((x) => x.name == newPerson.name).length > 0;
+    if (personExists) {
+      alert(`${newPerson.name} is already exists in the phone book`);
+      return;
+    }
+    
+   
+    const clonedPerson = { ...newPerson };
+    setPersons([...persons, clonedPerson]);
+    setErrorMessage(`${newPerson.name} added to the phonebook!`);
+    setNewPerson({ name: "", number: "" });
+
     personService
-      .addPerson(newPerson)
+      .addPerson(clonedPerson)
       .then((data) => {
-        setPersons([...persons, data]);
-        setNewPerson({ name: "", number: "" });
-        setErrorMessage(`${newPerson.name} added to the phonebook!`);
         setTimeout(() => {
           setErrorMessage(null);
         }, 5000);
@@ -52,7 +63,8 @@ const App = () => {
         setTimeout(() => {
           setErrorMessage(null);
         }, 5000);
-      });
+      })
+      .finally(() => {});
   };
 
   const deletePerson = (id, name) => {
@@ -61,11 +73,11 @@ const App = () => {
     );
 
     if (confirmDelete) {
+      setPersons(persons.filter((person) => person.id !== id));
+      setErrorMessage(`${name} deleted from the phonebook!`);
       personService
         .deletePerson(id)
         .then(() => {
-          setPersons(persons.filter((person) => person.id !== id));
-          setErrorMessage(`${name} deleted from the phonebook!`);
           setTimeout(() => {
             setErrorMessage(null);
           }, 5000);
