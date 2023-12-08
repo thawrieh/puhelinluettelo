@@ -49,21 +49,7 @@ const App = () => {
           setErrorMessage(null);
         }, 5000);
       })
-      .catch((error) => {
-        console.error("Error adding person:", error);
-        if (error.response && error.response.status === 409) {
-          setErrorMessage(
-            `Failed to add ${newPerson.name}. The contact already exists. Please refresh and try again.`
-          );
-        } else {
-          setErrorMessage(
-            "An error occurred while adding the person. Please try again."
-          );
-        }
-        setTimeout(() => {
-          setErrorMessage(null);
-        }, 5000);
-      })
+      
       .finally(() => {});
   };
 
@@ -82,18 +68,7 @@ const App = () => {
             setErrorMessage(null);
           }, 5000);
         })
-        .catch((error) => {
-          console.error("Error deleting person:", error);
-          if (error.response && error.response.status === 404) {
-            setErrorMessage(
-              `${name} was not found. Please refresh and try again.`
-            );
-          } else {
-            setErrorMessage(
-              `Information of ${name} has already been removed from server`
-            );
-          }
-        });
+       
     }
   };
 
